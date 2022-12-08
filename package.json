@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon app.js",
-    "start": "npm run prestart npm run dev",
-    "lint": "npx eslint "
+    "start": "app.js",
+    "lint": "npx eslint ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RomanB10/express-mesto-gha.git"
   },
-  "author": "",
+  "author": "Roman B.",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/RomanB10/express-mesto-gha/issues"
