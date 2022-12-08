@@ -16,4 +16,4 @@
 `npm run dev` — запускает сервер с hot-reload
 
 **Ссылка на сайт**
-* [https://romanb10.github.io/mesto-react/](https://romanb10.github.io/mesto-react/)
+* [https://romanb10.github.io/express-mesto-gha/](https://romanb10.github.io/express-mesto-gha/)
