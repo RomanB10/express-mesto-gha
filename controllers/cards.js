@@ -14,7 +14,7 @@ const ERROR_500 = 'Произошла ошибка';
 module.exports.getCards = (req, res) => {
   Card.find({})
     .populate('owner')
-    .then((cards) => res.status(OK).send({ data: cards }))
+    .then((cards) => res.status(OK).send(cards))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'BadRequest') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
@@ -28,7 +28,14 @@ module.exports.getCards = (req, res) => {
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body; // получим из объекта запроса имя и ссылку
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(CREATED).send({ data: card }))
+    .then((card) => res.status(CREATED).send({
+      likes: card.likes,
+      _id: card._id,
+      name: card.name,
+      link: card.link,
+      owner: card.owner,
+      createdAt: card.createdAt,
+    }))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'BadRequest') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
@@ -46,7 +53,14 @@ module.exports.deleteCard = (req, res) => {
         res.status(NOT_FOUND).send({ message: ERROR_404 });
         return;
       }
-      res.send({ data: card });
+      res.send({
+        likes: card.likes,
+        _id: card._id,
+        name: card.name,
+        link: card.link,
+        owner: card.owner,
+        createdAt: card.createdAt,
+      });
     })
     .catch(() => {
       res.status(SERVER_ERROR).send({ message: ERROR_500 });
@@ -68,7 +82,14 @@ module.exports.likeCard = (req, res) => {
         res.status(NOT_FOUND).send({ message: ERROR_404 });
         return;
       }
-      res.send({ data: card });
+      res.send({
+        likes: card.likes,
+        _id: card._id,
+        name: card.name,
+        link: card.link,
+        owner: card.owner,
+        createdAt: card.createdAt,
+      });
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'BadRequest') {
@@ -91,7 +112,14 @@ module.exports.disLikeCard = (req, res) => {
         res.status(NOT_FOUND).send({ message: ERROR_404 });
         return;
       }
-      res.send({ data: card });
+      res.send({
+        likes: card.likes,
+        _id: card._id,
+        name: card.name,
+        link: card.link,
+        owner: card.owner,
+        createdAt: card.createdAt,
+      });
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'BadRequest') {

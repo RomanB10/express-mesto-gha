@@ -31,5 +31,5 @@ app.use('/cards', require('./routes/cards')); // Подключаем роуте
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.listen(PORT, () => {
-  console.log('Connected to PORT', PORT);
+  console.log('Listen PORT', PORT);
 });

@@ -13,7 +13,7 @@ const ERROR_500 = 'Произошла ошибка';
 // сработает при GET-запросе на URL '/users' - возвращает всех пользователей
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(OK).send({ data: users }))
+    .then((users) => res.status(OK).send(users))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'BadRequest') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
@@ -31,7 +31,12 @@ module.exports.getUser = (req, res) => {
         res.status(NOT_FOUND).send({ message: ERROR_404 });
         return;
       }
-      res.send({ data: user });
+      res.send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        _id: user._id,
+      });
     })
     .catch(() => {
       res.status(SERVER_ERROR).send({ message: ERROR_500 });
@@ -42,7 +47,12 @@ module.exports.getUser = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.status(CREATED).send({ data: user }))
+    .then((user) => res.status(CREATED).send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      _id: user._id,
+    }))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'BadRequest') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
@@ -68,7 +78,12 @@ module.exports.updateProfile = (req, res) => {
         res.status(NOT_FOUND).send({ message: ERROR_404 });
         return;
       }
-      res.send({ data: user });
+      res.send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        _id: user._id,
+      });
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'BadRequest') {
@@ -95,7 +110,12 @@ module.exports.updateAvatar = (req, res) => {
         res.status(NOT_FOUND).send({ message: ERROR_404 });
         return;
       }
-      res.send({ data: user });
+      res.send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        _id: user._id,
+      });
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'BadRequest') {
