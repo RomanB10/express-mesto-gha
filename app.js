@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 // Слушаем 3000 порт
-const PORT = 3000;
+const { PORT = 3000 } = process.env;
 // создаем сервер
 const app = express();
 
