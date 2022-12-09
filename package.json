@@ -12,6 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/RomanB10/express-mesto-gha.git"
   },
+  "keywords": [],
   "author": "Roman B.",
   "license": "ISC",
   "bugs": {
