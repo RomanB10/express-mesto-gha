@@ -1,9 +1,8 @@
-const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { NOT_FOUND } = require('./constants');
 
-// Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 // создаем сервер
 const app = express();
@@ -29,7 +28,17 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/users')); // Подключаем роутер пользователей
 app.use('/cards', require('./routes/cards')); // Подключаем роутер карточек
 
-app.use(express.static(path.join(__dirname, 'public')));
-app.listen(PORT, () => {
-  console.log('Listen PORT', PORT);
+app.use('*', (req, res, next) => {
+  res.status(NOT_FOUND).send({ message: 'Страница не найдена' });
+
+  next();
+});
+
+// Слушаем 3000 порт
+app.listen(PORT, (err) => {
+  if (err) {
+    console.log('Error while starting server');
+  } else {
+    console.log('Server has been started at port -', PORT);
+  }
 });

@@ -11,16 +11,12 @@ const {
   ERROR_500,
 } = require('../constants');
 
-// сработает при GET-запросе на URL /cards - возвращает всех пользователей
+// сработает при GET-запросе на URL '/cards' - возвращает все карточки
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .populate('owner')
+    .populate(['owner', 'likes'])
     .then((cards) => res.status(OK).send(cards))
-    .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'BadRequest') {
-        res.status(BAD_REQUSET).send({ message: ERROR_400 });
-        return;
-      }
+    .catch(() => {
       res.status(SERVER_ERROR).send({ message: ERROR_500 });
     });
 };
@@ -38,7 +34,8 @@ module.exports.createCard = (req, res) => {
       createdAt: card.createdAt,
     }))
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'BadRequest') {
+      console.log(err.name);
+      if (err.name === 'ValidationError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;
       }
@@ -63,7 +60,12 @@ module.exports.deleteCard = (req, res) => {
         createdAt: card.createdAt,
       });
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log(err.name);
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUSET).send({ message: ERROR_400 });
+        return;
+      }
       res.status(SERVER_ERROR).send({ message: ERROR_500 });
     });
 };
@@ -93,7 +95,8 @@ module.exports.likeCard = (req, res) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'BadRequest') {
+      console.log(err.name);
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;
       }
@@ -123,7 +126,8 @@ module.exports.disLikeCard = (req, res) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'BadRequest') {
+      console.log(err.name);
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;
       }

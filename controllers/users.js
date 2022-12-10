@@ -15,11 +15,7 @@ const {
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(OK).send(users))
-    .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'BadRequest') {
-        res.status(BAD_REQUSET).send({ message: ERROR_400 });
-        return;
-      }
+    .catch(() => {
       res.status(SERVER_ERROR).send({ message: ERROR_500 });
     });
 };
@@ -28,6 +24,7 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
+      console.log(user);
       if (!user) {
         res.status(NOT_FOUND).send({ message: ERROR_404 });
         return;
@@ -39,7 +36,12 @@ module.exports.getUser = (req, res) => {
         _id: user._id,
       });
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log(err.name);
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUSET).send({ message: ERROR_400 });
+        return;
+      }
       res.status(SERVER_ERROR).send({ message: ERROR_500 });
     });
 };
@@ -55,7 +57,8 @@ module.exports.createUser = (req, res) => {
       _id: user._id,
     }))
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'BadRequest') {
+      console.log(err.name);
+      if (err.name === 'ValidationError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;
       }
@@ -87,7 +90,8 @@ module.exports.updateProfile = (req, res) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'BadRequest') {
+      console.log(err.name);
+      if (err.name === 'ValidationError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;
       }
@@ -119,7 +123,7 @@ module.exports.updateAvatar = (req, res) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'BadRequest') {
+      if (err.name === 'ValidationError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;
       }

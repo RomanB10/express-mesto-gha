@@ -5,7 +5,7 @@ const OK = 200;
 const CREATED = 201;
 
 const ERROR_400 = 'Переданы некорректные данные';
-const ERROR_404 = 'Запрашиваемый пользователь не найден';
+const ERROR_404 = 'Передан несуществующий _id';
 const ERROR_500 = 'На сервере произошла ошибка';
 
 module.exports = {
