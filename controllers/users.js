@@ -24,7 +24,6 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
-      console.log(user);
       if (!user) {
         res.status(NOT_FOUND).send({ message: ERROR_404 });
         return;
@@ -37,7 +36,6 @@ module.exports.getUser = (req, res) => {
       });
     })
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'CastError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;
@@ -57,7 +55,6 @@ module.exports.createUser = (req, res) => {
       _id: user._id,
     }))
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;
@@ -90,7 +87,6 @@ module.exports.updateProfile = (req, res) => {
       });
     })
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;

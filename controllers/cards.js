@@ -34,7 +34,6 @@ module.exports.createCard = (req, res) => {
       createdAt: card.createdAt,
     }))
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;
@@ -61,7 +60,6 @@ module.exports.deleteCard = (req, res) => {
       });
     })
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'CastError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;
@@ -95,7 +93,6 @@ module.exports.likeCard = (req, res) => {
       });
     })
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;
@@ -126,7 +123,6 @@ module.exports.disLikeCard = (req, res) => {
       });
     })
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         res.status(BAD_REQUSET).send({ message: ERROR_400 });
         return;
