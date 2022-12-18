@@ -5,6 +5,7 @@ const User = require('../modeles/user'); // импорт моделе с соо�
 const MONGO_DUPLICATE_ERROR_CODE = 11000;
 const SOLT_ROUNDS = 10;
 const JWT_SECRET_KEY = "verty_secret";
+
 const {
   BAD_REQUSET,
   NOT_FOUND,
@@ -15,7 +16,6 @@ const {
   ERROR_404,
   ERROR_500,
 } = require('../constants');
-const user = require('../modeles/user');
 
 // сработает при GET-запросе на URL '/users' - возвращает всех пользователей
 module.exports.getUsers = (req, res) => {
@@ -28,7 +28,7 @@ module.exports.getUsers = (req, res) => {
 
 // сработает при GET-запросе на URL '/users/me' - получить информацию о текущем пользователе
 module.exports.getCurrentUser = (req, res) => {
-  console.log('req ЭТО: ', req.user._id)
+  console.log('req.user._id ЭТО: ', req.user._id);
   User.findById(req.user._id)
   .then((user) => {
     if (!user) {
@@ -75,10 +75,11 @@ module.exports.getUser = (req, res) => {
     });
 };
 
+// сработает при POST-запросе на URL '/signup',
 module.exports.createUser = (req, res) => {
-  const {name, about, avatar, email, password,} = req.body;
+  const { name, about, avatar, email, password } = req.body;
   console.log('Тело запроса:', req.body);
-  console.log({name, about, avatar, email, password,});
+  console.log({ name, about, avatar, email, password });
   if (!email || !password) {
     return res.status(401).send({ message: "Не передан email или pasword" });
   }
@@ -87,7 +88,7 @@ module.exports.createUser = (req, res) => {
    if (newUser){
     return res.status(409).send({ message: "Такой пользователь уже существует" });
    }*/
-     bcrypt.hash(req.body.password, 10)
+     bcrypt.hash(req.body.password, SOLT_ROUNDS)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     })
@@ -112,6 +113,7 @@ module.exports.createUser = (req, res) => {
     });
 };
 
+// сработает при POST-запросе на URL '/signin', аутентификация пользователя
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -125,7 +127,7 @@ module.exports.login = (req, res) => {
       console.log('user._id:', user._id)
       const token = jwt.sign({ _id: user._id }, JWT_SECRET_KEY, { expiresIn: '7d' });
 
-      console.log('CОХРАНИЛИ PAYLOAD:', token)
+      console.log('CОХРАНИЛИ PAYLOAD:', token);
       // вернём токен
       res.status(200).send({ token });
     })

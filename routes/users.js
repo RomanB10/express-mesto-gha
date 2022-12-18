@@ -13,6 +13,9 @@ router.get('/', getUsers);
 // сработает при GET-запросе на URL '/users/me' - получить информацию о текущем пользователе
 router.get('/me', getCurrentUser);
 
+// сработает при GET-запросе на URL '/users/:userId' - возвращает пользователя по _id
+router.get('/:userId', getUser);
+
 // сработает при PATCH-запросе на URL '/users/me' - обновляет профиль
 router.patch('/me', updateProfile);
 
