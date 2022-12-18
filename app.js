@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { NOT_FOUND } = require('./constants');
 
+const { createUser, login } = require('./controllers/users');
+const auth = require('./middlewares/auth');
+
 const { PORT = 3000 } = process.env;
 // создаем сервер
 const app = express();
@@ -17,16 +20,24 @@ mongoose.connect('mongodb://localhost:27017/mestodb', (err) => {
 });
 
 // захардкодили идентификатор пользователя в мидлвэер
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
   req.user = {
     _id: '638e8ec0ac3f87d6eb625453',
   };
 
   next();
-});
+});*/
 
-app.use('/users', require('./routes/users')); // Подключаем роутер пользователей
-app.use('/cards', require('./routes/cards')); // Подключаем роутер карточек
+// роуты, не требующие авторизации
+app.post('/signin', login);
+app.post('/signup', createUser);
+
+// авторизация
+/*app.use(auth);*/
+
+// роуты, которым авторизация нужна
+app.use('/users', auth, require('./routes/users')); // Подключаем роутер пользователей
+app.use('/cards', auth, require('./routes/cards')); // Подключаем роутер карточек
 
 app.use('*', (req, res, next) => {
   res.status(NOT_FOUND).send({ message: 'Страница не найдена' });
