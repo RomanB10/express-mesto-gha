@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET_KEY = "verty_secret";
+const { JWT_SECRET_KEY } = require('../constants');
 
 module.exports = (req, res, next) => {
   // достаём авторизационный заголовок
   const { authorization } = req.headers;
   console.log('В auth authorization ЭТО:', authorization);
+
   // убеждаемся, что он есть или начинается с Bearer
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return res.status(401).send({ message: 'Необходима авторизацияzzzzz' });
@@ -14,12 +15,14 @@ module.exports = (req, res, next) => {
   const token = authorization.replace('Bearer ', '');
   console.log('Извлекли TOKEN:', token);
   let payload;
+
   try {
     // верифицируем токен
     payload = jwt.verify(token, JWT_SECRET_KEY);
     console.log('PAYLOAD-', payload);
   } catch (err) {
     // отправим ошибку, если не получилось
+
     return res.status(401).send({ message: 'Необходима автор' });
   }
 

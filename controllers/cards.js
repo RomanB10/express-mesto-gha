@@ -50,6 +50,13 @@ module.exports.deleteCard = (req, res) => {
         res.status(NOT_FOUND).send({ message: ERROR_404 });
         return;
       }
+      console.log(card.owner._id, req.user._id)
+      console.log(card.owner._id.equals(req.user._id))
+      // запрещаем пользователю удалять чужие карточки
+      if (!card.owner._id.equals(req.user._id)) {
+          res.status(409).send({ message: 'Нельзя удалить чужие карточки' });
+        return;
+      }
       res.send({
         likes: card.likes,
         _id: card._id,

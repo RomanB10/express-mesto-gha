@@ -2,10 +2,6 @@ const bcrypt = require('bcryptjs'); // используем модуль для 
 const jwt = require('jsonwebtoken'); //
 const User = require('../modeles/user'); // импорт моделе с соответствующей схемой
 
-const MONGO_DUPLICATE_ERROR_CODE = 11000;
-const SOLT_ROUNDS = 10;
-const JWT_SECRET_KEY = "verty_secret";
-
 const {
   BAD_REQUSET,
   NOT_FOUND,
@@ -15,6 +11,9 @@ const {
   ERROR_400,
   ERROR_404,
   ERROR_500,
+  MONGO_DUPLICATE_ERROR_CODE,
+  SOLT_ROUNDS,
+  JWT_SECRET_KEY
 } = require('../constants');
 
 // сработает при GET-запросе на URL '/users' - возвращает всех пользователей

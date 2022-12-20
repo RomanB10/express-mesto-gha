@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
-    /*select: false,*/
+    select: false, // скрываем поле password
   },
 });
 
@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
 // у него будет два параметра — почта и пароль
 userSchema.statics.findUserByCredentials = function (email, password) {
   // попытаемся найти пользователя по почте
-  return this.findOne({ email }) // this — это модель User
+  return this.findOne({ email }).select('+password') // this — это модель User
     .then((user) => {
       console.log('Проверям что есть User-', user);
       // не нашёлся — отклоняем промис

@@ -19,21 +19,9 @@ mongoose.connect('mongodb://localhost:27017/mestodb', (err) => {
   console.log('Connected to MongoDB!!!');
 });
 
-// захардкодили идентификатор пользователя в мидлвэер
-/*app.use((req, res, next) => {
-  req.user = {
-    _id: '638e8ec0ac3f87d6eb625453',
-  };
-
-  next();
-});*/
-
 // роуты, не требующие авторизации
 app.post('/signin', login);
 app.post('/signup', createUser);
-
-// авторизация
-/*app.use(auth);*/
 
 // роуты, которым авторизация нужна
 app.use('/users', auth, require('./routes/users')); // Подключаем роутер пользователей
@@ -43,6 +31,11 @@ app.use('*', (req, res, next) => {
   res.status(NOT_FOUND).send({ message: 'Страница не найдена' });
 
   next();
+});
+
+// здесь обрабатываем все ошибки
+app.use((err, req, res, next) => {
+  res.send({ message: err.message });
 });
 
 // Слушаем 3000 порт
