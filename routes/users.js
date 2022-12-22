@@ -18,19 +18,22 @@ router.get('/me', getCurrentUser);
 router.get('/:userId', celebrate({
   params: Joi.object().keys({
     userId: Joi.string().alphanum().length(24),
-  })}), getUser);
+  }),
+}), getUser);
 
 // сработает при PATCH-запросе на URL '/users/me' - обновляет профиль
 router.patch('/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
-  })}), updateProfile);
+  }),
+}), updateProfile);
 
 // сработает при PATCH-запросе на URL '/users/me/avatar' - обновляет аватар
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().required().min(2),
-  })}), updateAvatar);
+  }),
+}), updateAvatar);
 
 module.exports = router;

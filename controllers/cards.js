@@ -16,7 +16,7 @@ module.exports.getCards = (req, res, next) => {
   Card.find({})
     .populate(['owner', 'likes'])
     .then((cards) => res.status(OK).send(cards))
-    .catch(err => next(err));
+    .catch((err) => next(err));
 };
 
 // сработает при POST-запросе на URL '/cards' - добавляет карточку
@@ -70,7 +70,7 @@ module.exports.deleteCard = (req, res, next) => {
 };
 
 // сработает при PUT-запросе на URL '/cards/:cardId/likes' - поставить лайк карточке
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
@@ -82,7 +82,7 @@ module.exports.likeCard = (req, res) => {
     .then((card) => {
       if (!card) {
         throw new NotFoundError(ERROR_404);
-      };
+      }
       res.send({
         likes: card.likes,
         _id: card._id,
@@ -102,7 +102,7 @@ module.exports.likeCard = (req, res) => {
 };
 
 // сработает при DELETE-запросе на URL '/cards/:cardId/likes' - удалить лайк с карточки
-module.exports.disLikeCard = (req, res) => {
+module.exports.disLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
@@ -123,7 +123,7 @@ module.exports.disLikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next (new BadRequestError(ERROR_400));
+        next(new BadRequestError(ERROR_400));
       } else {
         next(err);
       }

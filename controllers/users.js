@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const bcrypt = require('bcryptjs'); // используем модуль для хеширования пароля
 const jwt = require('jsonwebtoken'); //
 const User = require('../modeles/user'); // импорт моделе с соответствующей схемой
@@ -6,15 +7,10 @@ const NotFoundError = require('../errors/not-found-err');
 const UnauthorizedError = require('../errors/unauthorized-err');
 const ConflictError = require('../errors/conflict-err');
 const {
-  CONFLICT,
-  BAD_REQUSET,
-  NOT_FOUND,
-  SERVER_ERROR,
   OK,
   CREATED,
   ERROR_400,
   ERROR_404,
-  ERROR_500,
   MONGO_DUPLICATE_ERROR_CODE,
   SOLT_ROUNDS,
 } = require('../constants');
@@ -74,7 +70,9 @@ module.exports.getUser = (req, res, next) => {
 
 // сработает при POST-запросе на URL '/signup' - добавляет пользователя
 module.exports.createUser = async (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
   if (!email || !password) {
     return res.status(400).send({ message: 'Не переданы email или pasword' });
@@ -94,12 +92,13 @@ module.exports.createUser = async (req, res, next) => {
       return res.status(CREATED).send(newUser);
     }
   } catch (error) {
+    console.log(error);
     if (error.name === 'ValidationError') {
       next(new BadRequestError('Не валидные email или pasword'));
     } else if (error.code === MONGO_DUPLICATE_ERROR_CODE) {
       next(new ConflictError('Такой пользователь уже существует'));
     } else {
-      next(err);
+      next(error);
     }
   }
 };
@@ -134,7 +133,7 @@ module.exports.updateProfile = (req, res, next) => {
     {
       new: true, // обработчик then получит на вход обновлённую запись
       runValidators: true, // данные будут валидированы перед изменением
-    }
+    },
   )
     .then((user) => {
       if (!user) {
@@ -165,7 +164,7 @@ module.exports.updateAvatar = (req, res, next) => {
     {
       new: true, // обработчик then получит на вход обновлённую запись
       runValidators: true, // данные будут валидированы перед изменением
-    }
+    },
   )
     .then((user) => {
       if (!user) {

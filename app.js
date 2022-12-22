@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
+
 mongoose.set('strictQuery', false);
 
 const { NOT_FOUND } = require('./constants');
@@ -27,13 +28,13 @@ app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
-  }),
+  }).unknown(true),
 }), login);
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
-  }),
+  }).unknown(true),
 }), createUser);
 
 // роуты, которым авторизация нужна
@@ -60,7 +61,7 @@ app.use((err, req, res, next) => {
       // проверяем статус и выставляем сообщение в зависимости от него
       message: statusCode === 500
         ? 'На сервере произошла ошибка'
-        : message
+        : message,
     });
 });
 
