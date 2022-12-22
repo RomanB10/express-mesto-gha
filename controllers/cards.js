@@ -1,28 +1,26 @@
 const Card = require('../modeles/card'); // импорт моделе с соответствующей схемой
+const BadRequestError = require('../errors/bad-request-err');
+const NotFoundError = require('../errors/not-found-err');
+const ForbiddenError = require('../errors/forbidden-err');
 
 const {
-  BAD_REQUSET,
-  NOT_FOUND,
-  SERVER_ERROR,
   OK,
   CREATED,
   ERROR_400,
+  ERROR_403,
   ERROR_404,
-  ERROR_500,
 } = require('../constants');
 
 // сработает при GET-запросе на URL '/cards' - возвращает все карточки
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .populate(['owner', 'likes'])
     .then((cards) => res.status(OK).send(cards))
-    .catch(() => {
-      res.status(SERVER_ERROR).send({ message: ERROR_500 });
-    });
+    .catch(err => next(err));
 };
 
 // сработает при POST-запросе на URL '/cards' - добавляет карточку
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body; // получим из объекта запроса имя и ссылку
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(CREATED).send({
@@ -35,27 +33,23 @@ module.exports.createCard = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUSET).send({ message: ERROR_400 });
-        return;
+        next(new BadRequestError(ERROR_400));
+      } else {
+        next(err);
       }
-      res.status(SERVER_ERROR).send({ message: ERROR_500 });
     });
 };
 
 // сработает при DELETE-запросе на URL '/cards/:cardId' - удаляет карточку по идентификатору
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        res.status(NOT_FOUND).send({ message: ERROR_404 });
-        return;
+        throw new NotFoundError(ERROR_404);
       }
-      console.log(card.owner._id, req.user._id)
-      console.log(card.owner._id.equals(req.user._id))
       // запрещаем пользователю удалять чужие карточки
       if (!card.owner._id.equals(req.user._id)) {
-          res.status(409).send({ message: 'Нельзя удалить чужие карточки' });
-        return;
+        throw new ForbiddenError(ERROR_403);
       }
       res.send({
         likes: card.likes,
@@ -68,10 +62,10 @@ module.exports.deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUSET).send({ message: ERROR_400 });
-        return;
+        next(new BadRequestError(ERROR_400));
+      } else {
+        next(err);
       }
-      res.status(SERVER_ERROR).send({ message: ERROR_500 });
     });
 };
 
@@ -87,9 +81,8 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(NOT_FOUND).send({ message: ERROR_404 });
-        return;
-      }
+        throw new NotFoundError(ERROR_404);
+      };
       res.send({
         likes: card.likes,
         _id: card._id,
@@ -101,10 +94,10 @@ module.exports.likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        res.status(BAD_REQUSET).send({ message: ERROR_400 });
-        return;
+        next(new BadRequestError(ERROR_400));
+      } else {
+        next(err);
       }
-      res.status(SERVER_ERROR).send({ message: ERROR_500 });
     });
 };
 
@@ -117,8 +110,7 @@ module.exports.disLikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(NOT_FOUND).send({ message: ERROR_404 });
-        return;
+        throw new NotFoundError(ERROR_404);
       }
       res.send({
         likes: card.likes,
@@ -131,9 +123,9 @@ module.exports.disLikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        res.status(BAD_REQUSET).send({ message: ERROR_400 });
-        return;
+        next (new BadRequestError(ERROR_400));
+      } else {
+        next(err);
       }
-      res.status(SERVER_ERROR).send({ message: ERROR_500 });
     });
 };
