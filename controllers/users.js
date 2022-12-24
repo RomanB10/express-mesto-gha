@@ -13,6 +13,7 @@ const {
   ERROR_404,
   MONGO_DUPLICATE_ERROR_CODE,
   SOLT_ROUNDS,
+  JWT_SECRET_KEY,
 } = require('../constants');
 
 // сработает при GET-запросе на URL '/users' - возвращает всех пользователей
@@ -89,10 +90,15 @@ module.exports.createUser = async (req, res, next) => {
       password: hash,
     });
     if (newUser) {
-      return res.status(CREATED).send(newUser);
+      return res.status(CREATED).send({
+        name: newUser.name,
+        about: newUser.about,
+        avatar: newUser.avatar,
+        email: newUser.email,
+        id: newUser._id,
+      });
     }
   } catch (error) {
-    console.log(error);
     if (error.name === 'ValidationError') {
       next(new BadRequestError('Не валидные email или pasword'));
     } else if (error.code === MONGO_DUPLICATE_ERROR_CODE) {
@@ -113,7 +119,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       // аутентификация успешна
       // создаем токен
-      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET_KEY, {
         expiresIn: '7d',
       });
       // вернём токен

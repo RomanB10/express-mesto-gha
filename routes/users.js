@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const isURL = require('validator/lib/isURL');
 const {
   getUsers,
   getUser,
@@ -17,7 +18,7 @@ router.get('/me', getCurrentUser);
 // сработает при GET-запросе на URL '/users/:userId' - возвращает пользователя по _id
 router.get('/:userId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
+    userId: Joi.string().hex().alphanum().length(24),
   }),
 }), getUser);
 
@@ -32,7 +33,13 @@ router.patch('/me', celebrate({
 // сработает при PATCH-запросе на URL '/users/me/avatar' - обновляет аватар
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().min(2),
+    avatar: Joi.string().required()
+      .custom((value, helpers) => {
+        if (isURL(value)) {
+          return value;
+        }
+        return helpers.message('Некорректный URL');
+      }), // кастомная валидация
   }),
 }), updateAvatar);
 

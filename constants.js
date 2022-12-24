@@ -16,8 +16,7 @@ const ERROR_409 = 'Такой пользователь уже существуе
 
 const MONGO_DUPLICATE_ERROR_CODE = 11000;
 const SOLT_ROUNDS = 10;
-/* const JWT_SECRET_KEY = "verty_secret"; */
-const { JWT_SECRET_KEY } = process.env;
+const { JWT_SECRET_KEY = 'verty_secret' } = process.env;
 
 module.exports = {
   UNAUTHORIZED,

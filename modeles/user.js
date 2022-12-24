@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const isEmail = require('validator/lib/isEmail');
+const isEmail = require('validator/lib/isEmail');// валидаия Email
+const isURL = require('validator/lib/isURL');// валидаия URL
 const bcrypt = require('bcryptjs'); // используем модуль для хеширования пароля
 // опишем схему
 const userSchema = new mongoose.Schema({
@@ -21,9 +22,9 @@ const userSchema = new mongoose.Schema({
       'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator(v) {
-        return /^(http:\/\/|https:\/\/)/.test(v);
+        return isURL(v); // v - значение свойства avatar
       },
-      message: (props) => `${props.value} Неправильный формат ссылки!`,
+      message: (props) => `${props.value} Некорректный URL`,
     },
   },
   email: {
@@ -32,7 +33,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (v) => isEmail(v), // v - значение свойства email
-      message: 'Неправильный формат почты',
+      message: 'Некорректный email',
     },
   },
   password: {
@@ -57,7 +58,6 @@ userSchema.statics.findUserByCredentials = function (email, password) {
 
       // нашёлся — сравниваем хеши
       return bcrypt.compare(password, user.password).then((matched) => {
-        console.log('ПАРОЛИ СОВПАЛИ?: ', matched);
         if (!matched) {
           // хеши не совпали — отклоняем промис
           return Promise.reject(new Error('Неправильные почта или пароль'));

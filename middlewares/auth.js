@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../errors/unauthorized-err');
-const { ERROR_401 } = require('../constants');
+const { ERROR_401, JWT_SECRET_KEY } = require('../constants');
 
 module.exports = (req, res, next) => {
   // достаём авторизационный заголовок
@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
 
   try {
     // верифицируем токен
-    payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    payload = jwt.verify(token, JWT_SECRET_KEY);
   } catch (err) {
     if (err.statusCode === 401 || err.name === 'JsonWebTokenError') {
       next(new UnauthorizedError(ERROR_401));
