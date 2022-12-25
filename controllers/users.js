@@ -125,8 +125,8 @@ module.exports.login = (req, res, next) => {
       // вернём токен
       res.status(200).send({ token });
     })
-    .catch((err) => {
-      next(err);
+    .catch(() => {
+      next(new UnauthorizedError('Не правильные email или pasword'));
     });
 };
 

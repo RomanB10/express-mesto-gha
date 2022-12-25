@@ -12,10 +12,11 @@ const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-err');
 const CentralHandingError = require('./errors/CentralHandingError');
 
+require('dotenv').config();// необходим, чтобы пользоваться окружением 'process.env'
+
 const { PORT = 3000, MONGO_URL = 'mongodb://localhost:27017/mestodb' } = process.env;
 // создаем сервер
 const app = express();
-require('dotenv').config();
 
 // Защита от Dos-атак
 const limiter = rateLimit({

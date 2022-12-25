@@ -1,3 +1,6 @@
+require('dotenv').config();// необходим, чтобы пользоваться окружением 'process.env'
+
+const { JWT_SECRET_KEY = 'verty_secret' } = process.env;
 const BAD_REQUSET = 400;
 const UNAUTHORIZED = 401;
 const FORBIDDEN = 403;
@@ -16,7 +19,6 @@ const ERROR_409 = 'Такой пользователь уже существуе
 
 const MONGO_DUPLICATE_ERROR_CODE = 11000;
 const SOLT_ROUNDS = 10;
-const { JWT_SECRET_KEY = 'verty_secret' } = process.env;
 
 module.exports = {
   UNAUTHORIZED,
