@@ -11,6 +11,7 @@ const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-err');
 const CentralHandingError = require('./errors/CentralHandingError');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 require('dotenv').config();// необходим, чтобы пользоваться окружением 'process.env'
 
@@ -27,10 +28,10 @@ const limiter = rateLimit({
   message: 'Слишком много запросов с этого IP',
 });
 
-// Применить ограничение ко всем запросам
+// Применить ограничение ко всем запросам, для защиты от DoS-атак.
 app.use(limiter);
 
-// Защита всех заголовков
+// Защита всех заголовков, для простановки security-заголовков
 app.use(helmet());
 
 app.use(bodyParser.json());
@@ -41,6 +42,8 @@ mongoose.connect(MONGO_URL, (err) => {
   if (err) throw err;
   console.log('Connected to MongoDB!!!');
 });
+
+app.use(requestLogger); // подключаем логгер запросов
 
 // роуты, не требующие авторизации, с валидацией тела запроса средствами celebrate
 app.post('/signin', celebrate({
@@ -64,6 +67,8 @@ app.use('/cards', auth, require('./routes/cards')); // Подключаем ро
 app.use('*', (req, res, next) => {
   next(new NotFoundError('Страница не найдена'));
 });
+
+app.use(errorLogger); // подключаем логгер ошибок
 
 // обработчик ошибок celebrate
 app.use(errors());
